@@ -12,7 +12,7 @@
         </div>
        <div class="navbar-right  flex items-center gap-4">
           <div class="    flex items-center gap-4" > 
-            <span class="user-avatar">{{ me }}</span>
+            <span class="user-avatar">{{ initial }}</span>
             <button class="logout-btn"  @click="signOut()">
               <i class="fa fa-sign-out-alt"></i>
             </button>
@@ -23,7 +23,7 @@
       </div>
     </div>
 
-    <div class="navbar-bottom px-4 pt-4 border-y-1 shadow-md border-gray-200 w-full flex justify-center order-3  md:order-2 z-4">
+    <div class="navbar-bottom px-4 pt-4 border-y-1 shadow-md border-gray-200 w-full flex justify-center order-3  md:order-2 z-4" v-if="isAdmin">
       <div class="max-w-[1200px] w-full ">
         <ul class="nav-links justify-evenly md:justify-start md:px-0 md:gap-10 flex-wrap md:flex-nowrap ">
  
@@ -74,10 +74,11 @@ const router = useRouter()
 const isSubmenu = ref(false) 
 const isAdmin = ref(false)
 const navigationMenu = ref([
-  { title: 'Dashboard', value: '', icon: 'pi pi-home', access:'all' },
+  { title: 'Dashboard', value: 'admin', icon: 'pi pi-home', access:'all' },
   { title: 'Tasks', value: 'task', icon: 'pi pi-chart-bar', access:'all'} 
 ]) 
 const me = ref('')
+const initial = ref('')
 const defineRoute = (routepath) => {
   return route.path.split('/').length == 4
     ? route.path.split('/').slice(0, -1).join('/')
@@ -85,9 +86,9 @@ const defineRoute = (routepath) => {
 }
 const getMe = async()=>{ 
   try { 
-      me.value = auth.user 
-        me.value =   me.value[0].name.charAt(0).toUpperCase() || ''
-      console.log(me.value)
+      me.value = auth.user
+        initial.value =   me.value.name.charAt(0).toUpperCase() || '' 
+        isAdmin.value = me.value.role === 'admin'
   } catch (error) {  
      
   } 

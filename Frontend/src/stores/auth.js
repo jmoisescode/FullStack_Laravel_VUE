@@ -5,7 +5,7 @@ import { VueCookieNext } from "vue-cookie-next";
 
 export const useAuthStore = defineStore("auth", () => {
   const token = ref(VueCookieNext.getCookie("token") || null);
-  const user = ref(JSON.parse(VueCookieNext.getCookie("user")) || null);
+  const user = ref(Array.isArray(JSON.parse(VueCookieNext.getCookie("user")) ) ? JSON.parse(VueCookieNext.getCookie("user"))[0] : null);
   const isAuthenticated = (state) => !!state.token;
   const isAdmin = (state) => state.user?.role === 'admin';
   const login = async (email, password) => {
@@ -16,7 +16,7 @@ export const useAuthStore = defineStore("auth", () => {
 
     token.value = data.access_token;
     user.value = data.user;
-
+ 
     VueCookieNext.setCookie("user", JSON.stringify([user.value]));
     VueCookieNext.setCookie("token", data.access_token);
 

@@ -171,7 +171,8 @@
 import { ref, computed, watch, onMounted } from 'vue';
 import axios from '@/axios';
 import UserTasksDialog from '@/components/UserTasksDialog.vue';
-
+import { useTaskStore } from '../stores/task';
+const taskStore = useTaskStore();
 const filters = ref({
   search: '',
   status: null,
@@ -306,7 +307,7 @@ const handleUserCardClick = (user) => {
 };
 
 onMounted(() => {
-  fetchUserStats();
+  fetchUserStats();  
 });
 </script>
 

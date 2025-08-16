@@ -22,7 +22,7 @@ const router = createRouter({
           component: () => import('@/pages/TaskItem/tasklist.vue'),
         },  
            {
-          path: '/',
+          path: '/admin',
           name: 'adminDashboard',
           component: () => import('@/pages/admin.vue'),
         },  
@@ -62,24 +62,29 @@ const router = createRouter({
     }
   ],
 })
-
 router.beforeEach((to, from, next) => {
   document.title = to.meta.title ? to.meta.title : defaultTitle;
-  const auth = useAuthStore(); 
-  if (to.meta.auth && 
-    (!VueCookieNext.isCookieAvailable(import.meta.env.VITE_APP_ACCESS_TOKEN  ) )
-  ) {   
-    if ( to.name === 'signup') {
-      return next(to.path);
-    } 
-    else{
-      return next('/signin')
+  const auth = useAuthStore();
+
+  const hasToken = VueCookieNext.isCookieAvailable(import.meta.env.VITE_APP_ACCESS_TOKEN);
+
+  // 1. If route requires auth and no token → go to signin
+  if (to.meta.auth === true && !hasToken) {
+    if (to.name === 'signup') {
+      return next(); // allow signup
     }
-  } 
-  else{
-  return next(); 
-
+    return next('/signin');
   }
-});
 
+  // 2. If route requires auth and token exists → check role
+  if (to.meta.auth === true && hasToken && auth.user) {
+    if (auth.user.role === 'user' && to.path !== '/task') {
+      return next('/task'); // only redirect if not already on /task
+    }
+   
+  }
+
+  // 3. Otherwise continue
+  return next();
+});
 export default router

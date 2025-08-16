@@ -199,8 +199,9 @@ import draggable from "vuedraggable";
 import TaskEntry from "./TaskEntry.vue";
 
 import { useTaskStore } from "../../stores/task";
-
-const taskStore = useTaskStore();
+ 
+import { echo } from "@/plugins/echo";  
+const taskStore = useTaskStore(); 
 const confirm = useConfirm();
 
 const isAdmin = true; // change to false to test non-admin
@@ -386,6 +387,29 @@ const resetFilters = () => {
   priorityFilter.value = priorityOptions.value[0];
   searchQuery.value = "";
 };
+
+// 🟢 WebSocket listener
+const listenForUpdates = () => {
+  echo.channel("tasks")
+    .listen("TaskCreated", (e) => {
+      console.log("Task created:", e);
+      tasks.value.push(e.task);
+      originalTasks.value.push(e.task);
+    })
+    .listen("TaskUpdated", (e) => {
+      console.log("Task updated:", e);
+      const index = tasks.value.findIndex((t) => t.id === e.task.id);
+      if (index !== -1) tasks.value[index] = e.task;
+      const origIndex = originalTasks.value.findIndex((t) => t.id === e.task.id);
+      if (origIndex !== -1) originalTasks.value[origIndex] = e.task;
+    })
+    .listen("TaskDeleted", (e) => {
+      console.log("Task deleted:", e);
+      tasks.value = tasks.value.filter((t) => t.id !== e.id);
+      originalTasks.value = originalTasks.value.filter((t) => t.id !== e.id);
+    });
+};
+
 const construct = async () => {
   originalTasks.value = [];
   await taskStore.fetchTasks(1);
@@ -395,24 +419,7 @@ const construct = async () => {
     await taskStore.reorderTasks(taskStore.TaskList);
   }
 };
-
-// Add this computed property after your other computed properties
-const statistics = computed(() => {
-  const total = tasks.value.length;
-  const completed = tasks.value.filter(task => task.status === 'completed').length;
-  const pending = tasks.value.filter(task => task.status === 'pending').length;
-  const highPriority = tasks.value.filter(task => task.priority === 'high').length;
-
-  return {
-    total,
-    completed,
-    pending,
-    highPriority,
-    completedPercentage: total ? Math.round((completed / total) * 100) : 0,
-    pendingPercentage: total ? Math.round((pending / total) * 100) : 0,
-    highPriorityPercentage: total ? Math.round((highPriority / total) * 100) : 0
-  };
-});
+ 
 
 // Add these computed properties
 const paginationInfo = computed(() => {
@@ -429,6 +436,8 @@ const paginationInfo = computed(() => {
 
 onBeforeMount(async () => {
   await construct();
+  
+  listenForUpdates(); // Initialize WebSocket listeners
 });
 
 // Add these methods
@@ -436,11 +445,7 @@ const onPageChange = async (event) => {
   const page = Math.floor(event.first / event.rows) + 1;
   await taskStore.fetchTasks(page);
 };
-
-const onPerPageChange = async () => {
-  first.value = 0; // Reset to first page
-  await taskStore.fetchTasks(1);
-};
+ 
 </script>
 
 <style> 
