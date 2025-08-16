@@ -2,27 +2,29 @@
   <div class="p-4">
     <!-- Task Filters -->
     <div class="flex flex-wrap gap-3 mb-4">
-      <span class="p-input-icon-left flex-1">
-        <i class="pi pi-search" />
-        <InputText
-          v-model="filters.search"
-          placeholder="Search tasks..."
-          class="w-full"
-        />
-      </span>
+      
+      <IconField class="flex-1 ">
+          <InputIcon class="pi pi-search" />
+          <InputText   
+            v-model="searchQuery"
+            type="text"
+            placeholder="Search tasks..."
+            class="border w-full h-full border-gray-300 bg-gray-50 rounded px-3 py-2"
+            icon="pi pi-search" />
+      </IconField>
       <Dropdown
         v-model="filters.status"
         :options="statusOptions"
         optionLabel="name"
         placeholder="Status"
-        class="w-48"
+        class="md:w-48"
       />
       <Dropdown
         v-model="filters.priority"
         :options="priorityOptions"
         optionLabel="name"
         placeholder="Priority"
-        class="w-48"
+        class=" md:w-48"
       />
     </div>
 

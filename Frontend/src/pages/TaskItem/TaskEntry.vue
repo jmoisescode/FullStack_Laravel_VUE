@@ -34,7 +34,7 @@
         </div>
         <div class="flex justify-end gap-2">
             <Button type="button" label="Cancel" severity="secondary" @click="closeform"></Button>
-            <Button type="submit" label="Save"></Button>
+            <Button type="submit" label="Save" :loading="isSubmit"></Button>
         </div>
         </form>
     </div>
@@ -44,6 +44,10 @@
 import { ref, watch,reactive } from 'vue'  
 import { useTaskStore } from "../../stores/task";
 
+import { useToast } from "primevue/usetoast"; 
+ 
+
+const toast = useToast()
 const taskStore = useTaskStore();
 const form = reactive({
   title: '',
@@ -84,6 +88,7 @@ const validateForm = () => {
     
 }
 const saveTask = async()=>{ 
+    try{ 
     const error = validateForm() 
     if (isSubmit.value) return;
     isSubmit.value = true;
@@ -91,15 +96,22 @@ const saveTask = async()=>{
         console.error(error)
         return
     }
-    if (form.id) {
-        console.log('edit',form)
+    if (form.id) { 
         await taskStore.modifyTask(form.id, form);
-    } else {
-        console.log('add',form)
+          toast.add({ severity: 'success', summary: 'Success', detail: 'Task updated successfully!', life: 3000 ,
+              group: "app_toast",});
+    } else { 
         await taskStore.createTask({ ...form });
+          toast.add({ severity: 'success', summary: 'Success', detail: 'Task created successfully!', life: 3000 ,
+              group: "app_toast",});
     } 
     isSubmit.value = false;
     closeform()
+    }
+    catch(error){
+         toast.add({ severity: 'error', summary: 'Error logging in', detail: error.message, life: 3000 ,
+              group: "app_toast",});
+    }
 }
 
 const closeform = ()=>{

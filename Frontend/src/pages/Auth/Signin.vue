@@ -1,6 +1,6 @@
 <template>
     
-<div class="bg-white rounded-2xl shadow-xl w-full h-full md:h-auto  md:w-[800px] max-w-lg justify-center md:justify-start p-9 flex flex-col items-center">
+<div class="bg-white rounded-2xl shadow-xl w-full h-full md:h-auto  md:w-[800px] md:max-w-lg justify-center md:justify-start p-9 flex flex-col items-center">
       <!-- Logo -->
       <div class="flex flex-col items-center"> 
           <img
@@ -86,8 +86,7 @@ const validateForm = async () => {
     // await loginSchema.validate(form.value, { abortEarly: false })
     return true
   } catch (validationErrors) {
-    errors.value = {}
-    console.log(validationErrors)
+    errors.value = {} 
     validationErrors.inner.forEach(error => {
       errors.value[error.path] = error.message
     })
@@ -110,6 +109,7 @@ const login = async () => {
       } else {
         localStorage.removeItem('remember_email')
       } 
+       
         router.replace('/');  
  
    

@@ -67,6 +67,7 @@
           </div>
         </template>
       </Select>
+      <div class="flex gap-4 flex-1">
       <IconField class="flex-1 ">
           <InputIcon class="pi pi-search" />
           <InputText   
@@ -83,6 +84,7 @@
       >
         + Add Task
       </Button>
+      </div>
     </div> 
     <draggable v-model="tasks" @end="saveOrder" item-key="id" class="space-y-3">
       <template #item="{ element: task }">
@@ -141,8 +143,7 @@
               severity="info"
               rounded
               variant="outlined"
-              aria-label="Cancel"
-              v-if="isAdmin"
+              aria-label="Cancel" 
               @click="openEditTask(task)"
             />
 
@@ -201,11 +202,12 @@ import TaskEntry from "./TaskEntry.vue";
 import { useTaskStore } from "../../stores/task";
  
 import { echo } from "@/plugins/echo";  
+import { useAuthStore } from '@/stores/auth';
+const auth = useAuthStore();
 const taskStore = useTaskStore(); 
 const confirm = useConfirm();
 
-const isAdmin = true; // change to false to test non-admin
-
+const isAdmin = ref(false)
 const priorityOptions = ref([
   {
     name: "All Priorities",
@@ -411,6 +413,7 @@ const listenForUpdates = () => {
 };
 
 const construct = async () => {
+   isAdmin.value = auth.user.role === 'admin';
   originalTasks.value = [];
   await taskStore.fetchTasks(1);
   tasks.value = taskStore.TaskList;

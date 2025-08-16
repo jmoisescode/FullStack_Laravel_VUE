@@ -21,6 +21,11 @@ const router = createRouter({
           name: 'Task',
           component: () => import('@/pages/TaskItem/tasklist.vue'),
         },  
+            {
+          path: '/',
+          name: 'Dashboard',
+          component: () => import('@/pages/admin.vue'),
+        },  
            {
           path: '/admin',
           name: 'adminDashboard',

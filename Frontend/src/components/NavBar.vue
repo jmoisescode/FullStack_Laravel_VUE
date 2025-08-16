@@ -97,7 +97,7 @@ const getMe = async()=>{
 const signOut = async()=>{ 
   try {
     auth.logout();
-    router.push('/signin');
+    location.reload()
     
   } catch (error) { 
      toast.add({ severity: 'error', summary: 'Error logging out', detail: error.message, life: 3000 ,

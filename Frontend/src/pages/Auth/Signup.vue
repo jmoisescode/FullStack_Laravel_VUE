@@ -1,6 +1,6 @@
 <template>
   <div
-    class="bg-white rounded-2xl shadow-xl flex-1  w-full h-full md:h-auto  md:w-[800px] max-w-lg justify-center md:justify-start p-9 "
+    class="bg-white rounded-2xl shadow-xl flex-1  w-full h-full md:h-auto  md:w-[800px]  justify-center md:justify-start p-9 "
   >
     <!-- Logo -->
     <div class="flex flex-col items-center">
