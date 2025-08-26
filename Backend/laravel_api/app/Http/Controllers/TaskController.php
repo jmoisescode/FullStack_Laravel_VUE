@@ -46,9 +46,7 @@ class TaskController extends Controller
             $query = Task::query();
 
             // Check role through user object
-
-                $query->where('user_id', $user->id);
-
+            $query->where('user_id', $user->id);
 
             return $query->status($status)
                 ->priority($priority)
@@ -80,7 +78,6 @@ class TaskController extends Controller
 
         return response()->json($tasks);
     }
-
      /**
      * @OA\Post(
      *     path="/api/tasks",
@@ -108,10 +105,29 @@ class TaskController extends Controller
             'priority' => $request->priority ?? 1
         ]);
     }
-
+    /**
+     * @OA\Post(
+     *     path="/api/tasks/reorder",
+     *     summary="Reorder tasks",
+     *     tags={"Tasks"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"order"},
+     *             @OA\Property(
+     *                 property="order",
+     *                 type="array",
+     *                 @OA\Items(type="integer", example=1)
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=204, description="Tasks reordered successfully")
+     * )
+     */
     public function reorder(ReorderTasksRequest $request)
     {
-            $user = auth()->user(); // Get the authenticated user
+        $user = auth()->user(); // Get the authenticated user
 
         $ids = $request->validated()['order'];
           $query = Task::query();
@@ -138,15 +154,42 @@ class TaskController extends Controller
  // broadcast(new \App\Events\TasksReordered(auth()->id(), $ids))->toOthers();
         return response()->noContent();
     }
-
+    /**
+     * @OA\Put(
+     *     path="/api/tasks/{id}",
+     *     summary="Update a task",
+     *     tags={"Tasks"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(name="id", in="path", required=true, description="Task ID", @OA\Schema(type="integer")),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/TaskRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Task updated successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/Task")
+     *     )
+     * )
+     */
     public function update(Request $request, Task $task)
     {
         $this->authorize('update', $task);
         $task->update($request->only('title', 'description', 'status', 'priority', 'order'));
-      //   broadcast(new TaskUpdated($task))->toOthers();
+        broadcast(new TaskUpdated($task))->toOthers();
         return $task;
     }
 
+    /**
+     * @OA\Delete(
+     *     path="/api/tasks/{id}",
+     *     summary="Delete a task",
+     *     tags={"Tasks"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(name="id", in="path", required=true, description="Task ID", @OA\Schema(type="integer")),
+     *     @OA\Response(response=200, description="Task deleted successfully")
+     * )
+     */
     public function destroy(Task $task)
     {
         $this->authorize('delete', $task);

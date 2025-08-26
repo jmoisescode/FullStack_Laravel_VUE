@@ -221,7 +221,7 @@ ul.nav-links {
 }
 
 /* Responsive utility classes (if not using Tailwind, add these) */
-@media (min-width: 1024px) {
+@media (min-width: 769px) {
   .lg\:inline {
     display: inline !important;
   }
@@ -229,7 +229,7 @@ ul.nav-links {
     display: none !important;
   }
 }
-@media (max-width: 1023px) {
+@media (max-width: 768px) {
   .lg\:inline {
     display: none !important;
   }

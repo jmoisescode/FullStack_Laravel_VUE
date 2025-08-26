@@ -26,6 +26,4 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/admin/user-statistics', [AdminController::class, 'userStatistics']);
     Route::get('/admin/users/{user}/tasks', [AdminController::class, 'userTasks']);
-
-
 });

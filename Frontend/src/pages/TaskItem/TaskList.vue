@@ -303,8 +303,11 @@ const openEditTask = (task) => {
   taskForm.value = task;
   showModal.value = true;
 };
-const markCompleted = (task) => {
+const markCompleted = async(task) => {
   task.status = task.status === "completed" ? "pending" : "completed";
+   await taskStore.modifyTask(task.id, task);
+          toast.add({ severity: 'success', summary: 'Success', detail: 'Task updated successfully!', life: 3000 ,
+              group: "app_toast",});
 }; 
 
 const confirmDelete = (id)=>{
@@ -452,7 +455,6 @@ const onPageChange = async (event) => {
 </script>
 
 <style> 
-/* Replace the @apply styles with direct classes in the template */
 .p-paginator {
   background-color: white;
   border-radius: 0.5rem;

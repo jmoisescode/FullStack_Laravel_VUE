@@ -115,6 +115,7 @@ export const useTaskStore = defineStore("task", () => {
   };
  
   const listenForUpdates = () => {
+    
     echo.channel("tasks")
       .listen("TaskUpdated", (e) => {
         console.log("Task updated:", e);
